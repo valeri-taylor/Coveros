@@ -127,28 +127,25 @@ public class CreditCard {
     public static int calculateCheckDigit(String creditCard) {
         StringBuilder sb = new StringBuilder(creditCard.replaceAll("[^0-9]", ""));
         char[] digits = sb.reverse().toString().toCharArray();
-        int[] numbers = new int[digits.length - 1];
-        for (int i = 1; i < digits.length; i++) {
-            if (i%2 != 0) {
-                numbers[i - 1] = Character.getNumericValue(digits[i]) * 2;
-            } else {
-                numbers[i - 1] = Character.getNumericValue(digits[i]);
-            }
-        }
-        for (int k = 0; k < numbers.length; k++) {
-            if (numbers[k] >= 10) {
-                char[] twoDigits = ("" + numbers[k]).toCharArray();
-                numbers[k] = Character.getNumericValue(twoDigits[0] + Character.getNumericValue(twoDigits[1]));
-            }
-        }
-
         int sum = 0;
-        for (int num : numbers) {
-            sum = sum + num;
+        for (int i = 1; i < digits.length; i++) {
+            int value = Character.getNumericValue(digits[i]);
+            if (i%2 != 0) {
+                if (value * 2 >= 10) {
+                    char[] twoDigits = ("" + value * 2).toCharArray();
+                    sum += Character.getNumericValue(twoDigits[0] + Character.getNumericValue(twoDigits[1]));
+                } else {
+                    sum += value * 2;
+                }
+            } else {
+                sum += value;
+            }
         }
 
-        int remain = sum % 10;
-
-        return 10 - remain;
+        if (sum >= 10) {
+            char[] sumDigits = ("" + sum).toCharArray();
+            return 10 - Character.getNumericValue(sumDigits[sumDigits.length - 1]);
+        }
+        return 10 - sum;
     }
 }
